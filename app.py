@@ -30,8 +30,8 @@ def home():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/enter start date in YYYY-MM-DD format<br/>"
+        f"/api/v1.0/enter start date in YYYY-MM-DD format/enter end date in YYYY-MM-DD format<br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -110,14 +110,16 @@ def startdate(start):
         
     session.close()
 
+    startdate = []
     for min, max, avg in results:
         temp_stats = {}
         temp_stats["Average Temperature"] = avg
         temp_stats["Min Temperature"] = min
         temp_stats["Max Temperature"] = max
         temp_stats["Observations Since"] = start
-        
-    return jsonify(temp_stats)
+        startdate.append(temp_stats)
+
+    return jsonify(startdate)
 
 @app.route("/api/v1.0/<start>/<end>")
 def start_end(start, end):
@@ -129,6 +131,7 @@ def start_end(start, end):
         filter(Measurement.date>=start).filter(Measurement.date<=end).all()
     session.close()
 
+    startend = []
     for min, max, avg in results:
         temp_start_end = {}
         temp_start_end["Average Temperature"] = avg
@@ -136,8 +139,8 @@ def start_end(start, end):
         temp_start_end["Max Temperature"] = max
         temp_start_end["Observations Start Date"] = start
         temp_start_end["Observations End Date"] = end
-
-    return jsonify(temp_start_end)
+        startend.append(temp_start_end)
+    return jsonify(startend)
 
 if __name__ == "__main__":
     app.run(debug=True)
